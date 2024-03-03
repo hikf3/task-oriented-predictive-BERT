@@ -1,9 +1,7 @@
 import torch
 import torch.nn as nn
-#from optimizers import NoamOptimizer
 from modeling import BertConfig, BertForSequenceClassification, BertForPreTraining
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler, BatchSampler
-#from dataloader import InputFeatures, BERTdataEHR, BERTdataEHRloader
 from log_utils import make_run_name, make_logger, make_checkpoint_dir
 import pickle as pkl
 import time
@@ -934,7 +932,7 @@ class BertTrainer:
         elapsed = now - self.start_time
         return str(elapsed).split('.')[0]  # remove milliseconds
 
-def pretrain():
+def berttrain():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-c", "--train_dataset", required=True, type=str, help="train dataset for train bert")
@@ -1054,7 +1052,7 @@ def pretrain():
     trainer.run(epochs=args.epochs)
 
 if __name__ == "__main__":
-    pretrain()
+    berttrain()
     wandb.finish()
 
 
