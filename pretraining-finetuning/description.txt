@@ -1,0 +1,68 @@
+1. BertSelfAttention: 
+    input: input tensor 
+    output: attention scores (context layer: weight the importance of each token's representation)
+    (i) input tensor -> linearly transformed into 'query', 'key', and 'value' using separate linear layers
+    (ii) The Q, K, and V tensors are reshaped -> allow multiple atention heads and parallel attention computations
+    (iii) attention scores = dot product (Q * K)/sqrt(d)
+    (iv) attention scores are combined with attention mask to mask out padded tokens
+    (v) attention prob = softmax (attention scores)
+    (vi) dropout for regularization
+    (vii) context layer = attention prob * V 
+
+2. BertSelfOutput: processes the output of the BertSelfAttention:
+    (i) self-attention output tensor (context layer) --> linearly transformed using a dense layer
+    (ii) dropout for regularization
+    (iii) output tensor (ii) added to input tensor (residual connection) and passed through layer norm
+
+3. BertAttention: combines BertSelfAttention and BertSelfOutput to form a single attention layer. 
+    (i) takes input tensor and attention mask and passes through BertSelfAttention
+    (ii) output tensor from (i) is then passed through BertSelfOutput with input_tensor
+
+4. BertIntermediate: takes the hidden states, applies a linear transformation using dense layer and then
+applies an activation function. returns intermediate output (hidden states)
+
+5. BertOutput: represents output layer. Takes intermediate states, applies dense layer, dropout, 
+and layer norm(processed intermediate tensor + original input_tensor)
+
+6. BertLayer: a single layer -> contains three components: BertAttention, BertIntermediate, and BertOutput
+hidden 
+def forward(self, hidden_states, attention_mask):
+        (3)attention_output = self.attention(hidden_states, attention_mask)
+        (4)intermediate_output = self.intermediate(attention_output)
+        (5)layer_output = self.output(intermediate_output, attention_output)
+        return layer_output
+
+7. BertEncoder: stacks a list of 'BertLayer' --> applied to the input hidden states num-hidden_layers times
+output: all the encoded layers  appended
+
+8. BertPooler: creates the pooled output. takes hidden states and applies a linear transformation (dense layer)
+ then a hyperbolic tangent activation function -> pooled representation of the entire input sequence
+
+9. BertPredictionHeadTransform: applies dense layer, activation function, and layer norm
+
+10. BertLMPredictionHead: prediction head for MLM. takes transformed hidden states as input and performs a linear transformation
+to predict the likelihood of each token in the vocab
+
+11. BertOnlyMLMHead: contains BertLMPredictionHead, takes the sequence output from Bert encoder and
+predicts the likelihood of each token in the vocabulary being masked
+
+12. BertOnlyNSPHead: takes pooled output from encoder to predict the binary task
+
+13. BertPreTrainingHeads: combines MLM and NSP prediction heads 
+def forward(self, sequence_output, pooled_output):
+        prediction_scores = self.predictions(sequence_output)
+        seq_relationship_score = self.seq_relationship(pooled_output)
+        return prediction_scores, seq_relationship_score
+
+14. PreTrainedBertModel: abstract class that handles weights initialization and provides a simple interface for downloading and
+loading pretrained models--> serves as a base class
+
+15. BertModel: main model. comprises BertEmbeddings, BertEncoder, BertPooler
+returns:  encoded_layers, pooled_output
+
+16. BertForPreTraining: extends PreTrainedBertModel and includes two pretraining heads: MLM and NSP 
+and computes sum of MLM and NSP loss --> BertModel & BertPreTrainingHeads
+
+17. BertForMaskedLM: only MLM loss
+
+18. BertForNextSentencePrediction: only NSP loss

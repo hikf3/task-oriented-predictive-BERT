@@ -1,0 +1,6 @@
+## Create finetuning/top-BERT datasets
+python preprocessing1.py FEATURES_DX_AGE_TRAIN.csv.gz behrt_features.types seq_features_ train
+
+python preprocessing1.py FEATURES_DX_AGE_TEST.csv.gz behrt_features.types seq_features_ test
+
+python preprocessing1.py FEATURES_DX_AGE_VALID.csv.gz behrt_features.types seq_features_ valid

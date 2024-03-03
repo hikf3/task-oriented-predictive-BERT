@@ -1,0 +1,23 @@
+# Execute the following codes from the terminal
+
+kubectl -n gpn-mizzou-nextgen-bmi create -f Aim1/medBERT/pretrain_pvc.yml
+
+# Check the pv claim
+
+kubectl -n gpn-mizzou-nextgen-bmi get pvc
+
+# Attach persistent volume to a pod to check files
+
+kubectl -n gpn-mizzou-nextgen-bmi create -f Aim1/medBERT/pretrain_pod.yml
+
+#Check pod
+kubectl -n gpn-mizzou-nextgen-bmi get pods
+
+# Confirm the pod is running and access it
+kubectl -n gpn-mizzou-nextgen-bmi exec -it pod-pretrain-medbert -- /bin/bash
+
+# run the job
+kubectl -n gpn-mizzou-nextgen-bmi create -f input_visit_time/pretrain_job.yml
+
+# Check the error in log
+kubectl -n gpn-mizzou-nextgen-bmi logs hikf3-job-pretrain-10-bl6tk -c hikf3-pod-pretrain-10

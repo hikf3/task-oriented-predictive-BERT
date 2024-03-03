@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-pretrain-dx
+spec:
+  containers:
+  - name: pod-pretrain-dx
+    image: gitlab-registry.nrp-nautilus.io/hikf3/ehr_bert:latest
+    command: ["sh", "-c", "echo 'Im a new pod' && sleep infinity"]
+    resources:
+      limits:
+        memory: 32Gi
+        cpu: 16
+        nvidia.com/gpu: 1
+      requests:
+        memory: 32Gi
+        cpu: 8
+        nvidia.com/gpu: 1
+    volumeMounts:
+    - mountPath: /aim1
+      name: pretrain-dx
+  volumes:
+    - name: pretrain-dx
+      persistentVolumeClaim:
+        claimName: pretrain-dx
+  affinity:
+          nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: topology.kubernetes.io/region
+                        operator: In
+                        values:
+                          - us-central
+                          - us-east
+                          - us-west
+                      - key: nvidia.com/gpu.product
+                        operator: In
+                        values:
+                          # asking for A100
+                          - NVIDIA-A10
+                          - NVIDIA-GeForce-RTX-3090
+                      - key: topology.kubernetes.io/zone
+                        operator: NotIn
+                        values:
+                          - unl
+                      - key: kubernetes.io/hostname
+                        operator: NotIn
+                        values:
+                          - gpu-04.nrp.mghpcc.org
+                          - gpu-07.nrp.mghpcc.org
+                          - sdmz-dtn.sox.net
+                          - nautilusg01.sci.cwru.edu
+
+ 

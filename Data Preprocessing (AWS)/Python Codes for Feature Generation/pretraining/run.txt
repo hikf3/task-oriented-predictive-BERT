@@ -1,0 +1,10 @@
+
+## Create train dataset for pretraining
+python data_intoseq.py DM_PRETRAIN_DX_AGE.csv.gz NA behrt_features
+
+python create_BERT_features.py -c behrt_features_train -v behrt_features.types -o ~/DATA_PREPROCESSING/
+
+
+
+
+

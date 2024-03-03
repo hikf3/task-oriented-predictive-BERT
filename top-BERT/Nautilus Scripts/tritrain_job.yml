@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hikf3-job-tritrain-10
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      # should we restart on failure
+      restartPolicy: Never
+      containers:
+      - name: hikf3-pod-tritrain-10
+        image: gitlab-registry.nrp-nautilus.io/hikf3/ehr_bert:latest
+        workingDir: /aim1
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh","-c"]
+        args: 
+        - bash run_tr10.sh
+        volumeMounts:
+        - name: pretrain-dx
+          mountPath: /aim1
+        resources:
+            limits:
+              memory: 512Gi
+              cpu: 16
+              nvidia.com/gpu: 1
+            requests:
+              memory: 128Gi
+              cpu: 6
+              nvidia.com/gpu: 1       
+      volumes:
+      - name: pretrain-dx
+        persistentVolumeClaim:
+            claimName: pretrain-dx
+      affinity:
+          nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: topology.kubernetes.io/region
+                        operator: In
+                        values:
+                          - us-central
+                          - us-east
+                          - us-west
+                      - key: nvidia.com/gpu.product
+                        operator: In
+                        values:
+                          # asking for A100
+                          - NVIDIA-A10
+                          - NVIDIA-GeForce-RTX-3090
+                      - key: topology.kubernetes.io/zone
+                        operator: NotIn
+                        values:
+                          - unl
+                      - key: kubernetes.io/hostname
+                        operator: NotIn
+                        values:
+                          - gpu-04.nrp.mghpcc.org
+                          - gpu-07.nrp.mghpcc.org
+                          - sdmz-dtn.sox.net
+                          - nautilusg01.sci.cwru.edu
+
+ 
