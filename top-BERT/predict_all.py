@@ -28,7 +28,7 @@ from torch.optim import AdamW
 experiment='tritrain-10-input_visit_time'
 #3753940 parameters
 
-wandb.login(key='8775b926c56fc57a316bb306aa7e0dc876f54821')
+wandb.login(key='##addkey')
 
 run=wandb.init(
     project="ehr_bert-"+experiment,
