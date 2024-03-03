@@ -1,8 +1,10 @@
-# task-oriented-predictive-BERT
+![image](https://github.com/hikf3/task-oriented-predictive-BERT/assets/72622960/acfeef9d-39fd-4da6-9bc2-96ca9d2055df)# task-oriented-predictive-BERT
 Shifting from the usual pretraining-finetuning model, we introduced an end-to-end training and evaluation method called task-oriented-predictive (top)-BERT. In top-BERT, we utilized the sequential input structure, embedding layer, and encoder stacks inherent to BERT to train and evaluate three tasks simultaneously: the conventional Masked Language Model (MLM), a binary classification for prolonged hospital stay (1 if the length of stay >7, else 0), and a multilabel sequence classification for the four complications mentioned above. We aggregated the loss of the three tasks, which was backpropagated throughout the entire network, leading to improved learning of our model in a limited cohort sample size. 
 
-![image](https://github.com/hikf3/task-oriented-predictive-BERT/assets/72622960/5081fba6-0218-4552-8701-76b4576d4dbe)
+The following shows the task-oriented-predictive BERT framework using the conventional terminology in BERT models. In BERT's architecture, embedded inputs pass through BertAttention layers to generate context-sensitive hidden states, further refined by a series of BertLayers to produce a stack of encoded outputs. The model outputs both these encoded layers and a pooled_output¬–the latter obtained from the hidden state of [CLS] token. We enhanced the BERT architecture and blended pretraining and finetuning into a unified process by integrating a sequence classification head. Utilizing pooled_output from the BertPooler, our adapted model conducts end-to-end training for sequence classification tasks. This method leverages multitasking during pretraining, allowing for simultaneous loss optimization across tasks and enhancing the model's predictive performance.
+
 ![top-BERT](https://github.com/hikf3/task-oriented-predictive-BERT/assets/72622960/8ac1b57f-5347-4a89-a0ab-a42b98ad6db5)
 
+The following shows the computational framework employed in our study, utilizing Snowflake, AWS Workbench, the Nautilus HyperCluster, and PyTorch(2.0). The use of Nautilus' parallel computing capabilities drastically cut down our total training duration from an estimated 65 days to just 2 days, evidencing significant efficiency gains.
 
 ![top-BERT_implementation](https://github.com/hikf3/task-oriented-predictive-BERT/assets/72622960/744d28cb-6717-4d74-8b80-003040bfe465)
