@@ -25,7 +25,7 @@ from sklearn.metrics import roc_auc_score
 experiment='pretrain-input_visit_time'
 #parameter_3753168
 
-wandb.login(key='8775b926c56fc57a316bb306aa7e0dc876f54821')
+wandb.login(key='#addkeyhere')
 
 run=wandb.init(
     project="ehr_bert-"+experiment,
